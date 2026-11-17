@@ -1,19 +1,8 @@
-/* WHATSAPP. Convierte el resumen en un mensaje listo para revisar y enviar. */
+/* Genera el texto listo para revisar y enviar al cliente. */
 (function(){
-  "use strict";
-  function enviar(){
-    var c=window.cotizacionActual;
-    if(!c||!c.cajas)return;
-    var formato=new Intl.NumberFormat("es-MX",{style:"currency",currency:"MXN"});
-    var lineas=["Hola Miguel 👋, quiero cotizar estos productos:",""];
-    Object.keys(c.seleccion).forEach(function(k){
-      var s=c.seleccion[k],p=s.producto;
-      lineas.push("• "+p.nombre+(p.presentacion?" ("+p.presentacion+")":""));
-      lineas.push("  "+s.cantidad+" caja(s) × "+formato.format(p.precio)+" = "+formato.format(s.cantidad*p.precio));
-    });
-    lineas.push("","TOTAL ESTIMADO: "+formato.format(c.total),"","Quedo pendiente, gracias. 😊");
-    var url="https://wa.me/"+window.COTIZADOR_CONFIG.whatsapp+"?text="+encodeURIComponent(lineas.join("\n"));
-    window.open(url,"_blank","noopener");
-  }
-  window.WhatsAppCotizador={enviar:enviar};
+"use strict";
+function emojiProducto(nombre){var t=String(nombre||"").toLocaleLowerCase("es"),reglas=[[/lim[oó]n/,"🍋"],[/naranja|orange/,"🍊"],[/uva/,"🍇"],[/manzana/,"🍏"],[/fresa|frutilla/,"🍓"],[/mango/,"🥭"],[/piña|pina/,"🍍"],[/coco/,"🥥"],[/ar[aá]ndano|mora|frutos rojos/,"🫐"],[/toronja|pomelo/,"🍊"],[/pepino/,"🥒"],[/jamaica/,"🌺"],[/tamarindo/,"🫘"],[/cola|dr pepper|rc cola/,"🥤"],[/mineral|agua/,"💧"],[/clamato/,"🍅"],[/energ|venom|red bull/,"⚡"]];for(var i=0;i<reglas.length;i++)if(reglas[i][0].test(t))return reglas[i][1];return "🥤";}
+function crearTexto(c){var formato=new Intl.NumberFormat("es-MX",{style:"currency",currency:"MXN"}),lineas=["📋 Envío la cotización de su pedido:",""],marcas={};Object.keys(c.seleccion).forEach(function(k){var s=c.seleccion[k],p=s.producto;if(!marcas[p.marca])marcas[p.marca]=[];marcas[p.marca].push(s);});Object.keys(marcas).forEach(function(marca){lineas.push("🏷️ "+marca);marcas[marca].forEach(function(s){var p=s.producto;lineas.push(emojiProducto(p.nombre)+" "+p.nombre+(p.presentacion?" · "+p.presentacion:""));lineas.push("   "+s.cantidad+" caja(s) × "+formato.format(p.precio)+" = "+formato.format(s.cantidad*p.precio));});lineas.push("");});lineas.push("📦 Total de cajas: "+c.cajas,"💰 TOTAL: "+formato.format(c.total),"","Quedo atento a sus comentarios. ¡Gracias! 😊");return lineas.join("\n");}
+function enviar(){var c=window.cotizacionActual;if(!c||!c.cajas)return;var texto=crearTexto(c),url="https://wa.me/"+window.COTIZADOR_CONFIG.whatsapp+"?text="+encodeURIComponent(texto);window.open(url,"_blank","noopener");}
+window.WhatsAppCotizador={enviar:enviar,crearTexto:crearTexto};
 })();
