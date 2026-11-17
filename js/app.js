@@ -18,5 +18,8 @@
   document.getElementById("recargar").addEventListener("click",cargar);
   document.getElementById("buscar").addEventListener("input",function(e){window.Cotizador.buscar(e.target.value);});
   document.getElementById("enviar").addEventListener("click",window.WhatsAppCotizador.enviar);
+  document.getElementById("ver-pedido").addEventListener("click",function(){
+    document.getElementById("resumen").scrollIntoView({behavior:"smooth",block:"start"});
+  });
   cargar();
 })();
