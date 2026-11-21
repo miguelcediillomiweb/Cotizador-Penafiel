@@ -1,8 +1,10 @@
 /* TICKETS DE REPARTO · Ruta T1371 */
 (function(){
 "use strict";
-var tickets=[],RUTA="T1371",VENDEDOR="MIGUEL ANGEL",CLAVE="cotizador_penafiel_consecutivo",dinero=new Intl.NumberFormat("es-MX",{style:"currency",currency:"MXN"});
+var RUTA="T1371",VENDEDOR="MIGUEL ANGEL",CLAVE="cotizador_penafiel_consecutivo",CLAVE_TICKETS="cotizador_penafiel_lote_tickets",tickets=[],dinero=new Intl.NumberFormat("es-MX",{style:"currency",currency:"MXN"});
+try{tickets=JSON.parse(localStorage.getItem(CLAVE_TICKETS)||"[]");if(!Array.isArray(tickets))tickets=[];}catch(e){tickets=[];}
 var $=function(id){return document.getElementById(id);};
+function guardarLote(){try{localStorage.setItem(CLAVE_TICKETS,JSON.stringify(tickets));}catch(e){console.warn("No se pudo guardar el lote de tickets en este dispositivo.",e);}}
 function fechaLocal(d){d=d||new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
 function fechaVisible(s){var p=String(s||"").split("-");return p.length===3?p[2]+"/"+p[1]+"/"+p[0]:s;}
 function hora(){return new Intl.DateTimeFormat("es-MX",{hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date());}
@@ -13,6 +15,7 @@ function agregar(){
  var items=seleccionActual();if(!items.length){alert("Primero selecciona los productos y las cajas del ticket.");return;}
  var fecha=$("ticket-fecha").value||fechaLocal(),total=items.reduce(function(a,p){return a+p.importe;},0),cajas=items.reduce(function(a,p){return a+p.cantidad;},0);
  tickets.push({numero:numeroPedido(fecha),cliente:$("ticket-cliente").value.trim(),vendedor:VENDEDOR,ruta:RUTA,fecha:fecha,hora:hora(),items:items,cajas:cajas,total:total});
+ guardarLote();
  $("ticket-cliente").value="";$("ticket-fecha").value=fechaLocal();window.Cotizador.limpiar();pintar();
 }
 function htmlTicket(t,i){
@@ -24,7 +27,7 @@ function pintar(){
  $("tickets-cantidad").textContent=tickets.length+" ticket"+(tickets.length===1?"":"s");
  $("tickets-total").textContent=dinero.format(tickets.reduce(function(a,t){return a+t.total;},0));
  $("tickets-enviar").disabled=!tickets.length;$("tickets-reiniciar").disabled=!tickets.length;
- Array.prototype.forEach.call(lista.querySelectorAll("[data-borrar]"),function(b){b.addEventListener("click",function(){tickets.splice(Number(b.getAttribute("data-borrar")),1);pintar();});});
+ Array.prototype.forEach.call(lista.querySelectorAll("[data-borrar]"),function(b){b.addEventListener("click",function(){tickets.splice(Number(b.getAttribute("data-borrar")),1);guardarLote();pintar();});});
 }
 function textoWhatsApp(){
  var lineas=["🧾 *TICKETS DE REPARTO · "+RUTA+"*","Vendedor: "+VENDEDOR,""];
@@ -37,7 +40,7 @@ function textoWhatsApp(){
  return lineas.join("\n");
 }
 function enviar(){if(!tickets.length)return;var url="https://wa.me/"+window.COTIZADOR_CONFIG.whatsapp+"?text="+encodeURIComponent(textoWhatsApp());window.open(url,"_blank","noopener");}
-function reiniciar(){if(!tickets.length)return;if(!confirm("¿Borrar todos los tickets preparados? El consecutivo no se reiniciará para evitar repetir números."))return;tickets=[];pintar();}
+function reiniciar(){if(!tickets.length)return;if(!confirm("¿Borrar todos los tickets preparados? El consecutivo no se reiniciará para evitar repetir números."))return;tickets=[];guardarLote();pintar();}
 $("ticket-fecha").value=fechaLocal();$("guardar-ticket").addEventListener("click",agregar);$("tickets-enviar").addEventListener("click",enviar);$("tickets-reiniciar").addEventListener("click",reiniciar);pintar();
 window.TicketsReparto={agregar:agregar,enviar:enviar};
 })();
