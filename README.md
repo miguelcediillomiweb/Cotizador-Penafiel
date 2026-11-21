@@ -25,4 +25,4 @@ La hoja debe permitir lectura pública mediante enlace para que GitHub Pages pue
 - Número de pedido consecutivo desde `1001`, guardado en el almacenamiento local del navegador para evitar reutilizar números al borrar tickets.
 - Cada ticket conserva productos, cantidad de cajas, precio de Sheets e importe por producto; no incluye códigos, impuestos ni descuentos.
 - Permite borrar tickets individuales, reiniciar el lote y preparar todos los tickets en un solo mensaje de WhatsApp.
-- Los tickets se mantienen en memoria mientras la página está abierta; no se guardan como historial permanente.
+- El lote de tickets y el consecutivo se conservan en el almacenamiento local del navegador, incluso si se recarga la página. El botón Reiniciar borra el lote, pero no reutiliza consecutivos.
