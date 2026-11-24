@@ -26,3 +26,10 @@ La hoja debe permitir lectura pública mediante enlace para que GitHub Pages pue
 - Cada ticket conserva productos, cantidad de cajas, precio de Sheets e importe por producto; no incluye códigos, impuestos ni descuentos.
 - Permite borrar tickets individuales, reiniciar el lote y preparar todos los tickets en un solo mensaje de WhatsApp.
 - El lote de tickets y el consecutivo se conservan en el almacenamiento local del navegador, incluso si se recarga la página. El botón Reiniciar borra el lote, pero no reutiliza consecutivos.
+
+## Cotización sencilla por tickets
+- `js/sencilla.js`: ticket en curso (fecha y hora del teléfono, Total 1, Total 2, observaciones), lista de tickets guardados en el teléfono y envío de todos en un solo mensaje de WhatsApp.
+- Cada ticket guarda su fecha y hora al agregarlo. En la lista se pueden editar Total 1, Total 2 y observaciones, y borrar el ticket.
+- Total cliente nuevo de cada ticket = Total 1 − Total 2. Solo aparece si se usó Total 1 o Total 2.
+- WhatsApp: no envía Total 1 ni Total 2; envía el Total cliente nuevo de cada ticket (sin sumarlos) y las observaciones que se escriban.
+- Se corrigió la limpieza de acentos en `js/cotizador.js`.
