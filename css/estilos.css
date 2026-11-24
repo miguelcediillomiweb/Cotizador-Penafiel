@@ -54,3 +54,35 @@
 /* Observaciones individuales de cada ticket */
 .ticket-observaciones{display:flex;flex-direction:column;gap:6px;margin:12px 0;font-size:12px;font-weight:800;color:var(--azul)}
 .ticket-observaciones textarea{width:100%;box-sizing:border-box;min-height:76px;padding:10px;border:1px solid var(--borde);border-radius:9px;background:#fff;color:var(--texto);font:inherit;font-size:14px;font-weight:400;resize:vertical}
+
+
+/* ===== Ticket de la cotización sencilla ===== */
+.simple-reloj{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:14px 0 0;padding:10px 12px;background:#f2f5fa;border-radius:10px;font-size:14px;font-weight:800;color:var(--azul)}
+.simple-reloj small{margin-left:auto;font-size:11px;font-weight:400;color:var(--muted)}
+.simple-zona{display:grid;gap:12px;align-items:start}
+.simple-privados{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px;border:1px solid #dce4ef;border-radius:10px;background:#f5f8fc}
+.simple-privados label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:800;color:var(--azul)}
+.simple-privados input{width:100%;min-width:0;padding:10px;border:1px solid var(--borde);border-radius:8px;background:#fff;font:inherit;font-size:15px;color:var(--texto)}
+.simple-cliente-nuevo{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 0;border-top:1px dashed #c5cfdd;font-size:14px;color:var(--azul)}
+.simple-cliente-nuevo strong{font-size:20px}
+.simple-observaciones{display:flex;flex-direction:column;gap:6px;margin:6px 0 16px;font-size:12px;font-weight:800;color:var(--azul)}
+.simple-observaciones textarea{width:100%;min-height:76px;padding:10px;border:1px solid var(--borde);border-radius:9px;background:#fff;color:var(--texto);font:inherit;font-size:14px;font-weight:400;resize:vertical}
+.boton-reiniciar{width:100%;margin-top:10px;padding:13px;border:1px solid #e4c4c0;border-radius:12px;background:#fff5f3;color:#a43b2c;font-size:14px;font-weight:800}
+@media(min-width:720px){.simple-zona{grid-template-columns:1fr 240px}.simple-privados{grid-template-columns:1fr}}
+/* ===== Lista de tickets de la cotización sencilla ===== */
+.simple-lista-bloque{margin-top:26px;padding-top:6px;border-top:3px solid var(--oro)}
+.simple-lista-titulo{font-size:17px;color:var(--azul);margin:14px 0 4px}
+.simple-lista{display:grid;gap:14px;margin:12px 0}
+.simple-item{border:1px solid var(--borde);border-radius:14px;padding:14px;background:#fbfcfe}
+.simple-item-cab{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;color:var(--azul);font-size:13px}
+.simple-item-cab span{color:var(--muted);font-size:12px}
+.simple-item-fila{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--borde);font-size:13px}
+.simple-item-fila span{display:flex;flex-direction:column;gap:3px;min-width:0;overflow-wrap:anywhere}
+.simple-item-fila small{color:var(--muted)}
+.simple-item-fila strong{white-space:nowrap;color:var(--azul)}
+.simple-item-total{display:flex;justify-content:space-between;align-items:center;padding:12px 0;font-size:14px;font-weight:800;color:var(--azul)}
+.simple-item .simple-privados{margin-bottom:6px}
+.ticket-borrar-simple{width:100%;margin-top:4px;padding:10px;border:1px solid #e4c4c0;border-radius:8px;background:#fff5f3;color:#a43b2c;font-weight:800}
+.simple-suma{border-top:0;padding-top:0}
+.simple-suma[hidden]{display:none}
+.simple-lista-bloque .boton-reiniciar:disabled,.boton-principal:disabled{opacity:.45}
