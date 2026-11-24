@@ -86,3 +86,15 @@
 .simple-suma{border-top:0;padding-top:0}
 .simple-suma[hidden]{display:none}
 .simple-lista-bloque .boton-reiniciar:disabled,.boton-principal:disabled{opacity:.45}
+
+
+/* Observaciones individuales y controles privados de cada ticket */
+.ticket-control-privado{margin-top:14px;padding:12px;border:1px solid #dce4ef;border-radius:10px;background:#f5f8fc;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+.ticket-totales-privados{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ticket-totales-privados label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:800;color:var(--azul)}
+.ticket-totales-privados input{width:100%;min-width:0;padding:10px;border:1px solid var(--borde);border-radius:8px;background:white;font:inherit;font-size:15px;color:var(--texto)}
+.ticket-nota-cliente{display:flex;justify-content:space-between;gap:8px;margin-top:12px;padding-top:10px;border-top:1px dashed #c5cfdd;font-size:12px;color:var(--azul)}
+.ticket-nota-cliente strong{font-size:15px}
+.ticket-observaciones{display:flex;flex-direction:column;gap:6px;margin:12px 0;font-size:12px;font-weight:800;color:var(--azul)}
+.ticket-observaciones textarea{width:100%;box-sizing:border-box;min-height:76px;padding:10px;border:1px solid var(--borde);border-radius:9px;background:#fff;color:var(--texto);font:inherit;font-size:14px;font-weight:400;resize:vertical}
+@media print{.ticket-control-privado{display:none!important}}
