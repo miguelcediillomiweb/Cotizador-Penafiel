@@ -1,7 +1,7 @@
 /* COTIZACIÓN SENCILLA POR TICKETS.
    Ticket en curso (fecha y hora del teléfono, Total 1, Total 2, observaciones),
    lista de tickets guardados en el teléfono y envío de todos en un solo WhatsApp.
-   Total cliente nuevo de cada ticket = Total 1 − Total 2. */
+   CLIENTE NUEVO global = suma de Total 1 − suma de Total 2 de todos los tickets. */
 (function(){
 "use strict";
 var CLAVE="cotizador_penafiel_tickets_sencillos",tickets=[],
@@ -16,9 +16,9 @@ function hora(d){return dos(d.getHours())+":"+dos(d.getMinutes());}
 function num(v){var n=parseFloat(v);return isFinite(n)?n:0;}
 function usa(a,b){return String(a==null?"":a).trim()!==""||String(b==null?"":b).trim()!=="";}
 function resta(a,b){return Math.round((num(a)-num(b))*100)/100;}
-function clienteNuevo(t){return usa(t.total1,t.total2)?resta(t.total1,t.total2):null;}
+function totalClienteNuevo(){return Math.round((tickets.reduce(function(a,t){return a+num(t.total1);},0)-tickets.reduce(function(a,t){return a+num(t.total2);},0))*100)/100;}
 function pintarReloj(){var d=new Date();$("simple-fecha").textContent=fecha(d);$("simple-hora").textContent=hora(d);}
-function pintarClienteActual(){$("simple-cliente-nuevo").textContent=dinero.format(resta($("simple-total1").value,$("simple-total2").value));}
+function pintarClienteNuevoGlobal(){var el=$("simple-cliente-nuevo-global");if(el)el.textContent=dinero.format(totalClienteNuevo());}
 function actualizar(){var c=window.cotizacionActual;$("simple-agregar").disabled=!(c&&c.cajas>0);}
 function fotoItems(){
   var c=window.cotizacionActual,mapa={},orden=[];
@@ -41,7 +41,6 @@ function limpiarActual(sinConfirmar){
 }
 function htmlTicket(t,i){
   var filas=t.items.map(function(p){return '<div class="simple-item-fila"><span><b>'+esc(p.marca)+'</b> · '+esc(p.descripcion)+(p.piezas?' · '+esc(p.piezas)+' por caja':'')+'<small>Cajas: '+p.cajas+'</small></span><strong>'+dinero.format(p.importe)+'</strong></div>';}).join("");
-  var cn=clienteNuevo(t);
   return '<article class="simple-item"><header class="simple-item-cab"><strong>Ticket '+(i+1)+'</strong><span>'+esc(t.fecha)+' · '+esc(t.hora)+'</span></header>'+filas+
   '<div class="simple-item-total"><span>Total a pagar ('+t.cajas+' cajas)</span><strong>'+dinero.format(t.total)+'</strong></div>'+
   '<div class="simple-privados"><label>Total 1<input type="number" inputmode="decimal" step="0.01" placeholder="0.00" value="'+esc(t.total1)+'" data-t1="'+i+'"></label><label>Total 2<input type="number" inputmode="decimal" step="0.01" placeholder="0.00" value="'+esc(t.total2)+'" data-t2="'+i+'"></label></div>'+
@@ -51,6 +50,7 @@ function htmlTicket(t,i){
 }
 function pintarResumenLista(){
   $("simple-cantidad").textContent=tickets.length+" ticket"+(tickets.length===1?"":"s");
+  pintarClienteNuevoGlobal();
   $("simple-enviar-todos").disabled=!tickets.length;$("simple-reiniciar-todo").disabled=!tickets.length;
 }
 function pintarLista(){
@@ -62,8 +62,6 @@ function alEscribir(e){
   if(o!==null){tickets[Number(o)].observaciones=el.value;guardar();return;}
   if(a===null&&b===null)return;
   var i=Number(a!==null?a:b);tickets[i][a!==null?"total1":"total2"]=el.value.trim();guardar();
-  var cn=clienteNuevo(tickets[i]),salida=$("simple-lista").querySelector('[data-cn="'+i+'"]');
-  if(salida)salida.textContent=cn===null?"—":dinero.format(cn);
   pintarResumenLista();
 }
 function alPulsar(e){
@@ -73,16 +71,14 @@ function alPulsar(e){
 }
 function enviar(){
   if(!tickets.length)return;
-  var lista=tickets.map(function(t){return{fecha:t.fecha,hora:t.hora,items:t.items,cajas:t.cajas,total:t.total,clienteNuevo:clienteNuevo(t),observaciones:String(t.observaciones||"").trim()};});
-  window.WhatsAppCotizador.enviarTickets(lista);
+  var lista=tickets.map(function(t){return{fecha:t.fecha,hora:t.hora,items:t.items,cajas:t.cajas,total:t.total,observaciones:String(t.observaciones||"").trim()};});
+  window.WhatsAppCotizador.enviarTickets(lista,totalClienteNuevo());
 }
 function reiniciarTodo(){
   if(!tickets.length)return;
   if(!confirm("¿Borrar todos los tickets de la lista? No se puede deshacer."))return;
   tickets=[];guardar();pintarLista();
 }
-$("simple-total1").addEventListener("input",pintarClienteActual);
-$("simple-total2").addEventListener("input",pintarClienteActual);
 $("simple-agregar").addEventListener("click",agregar);
 $("simple-limpiar").addEventListener("click",function(){limpiarActual(false);});
 $("simple-lista").addEventListener("input",alEscribir);
@@ -92,10 +88,10 @@ $("simple-reiniciar-todo").addEventListener("click",reiniciarTodo);
 document.addEventListener("visibilitychange",function(){if(!document.hidden)pintarReloj();});
 window.addEventListener("focus",pintarReloj);
 setInterval(pintarReloj,15000);
-pintarReloj();pintarClienteActual();pintarLista();
+pintarReloj();pintarLista();
 function datos(){
-  var d=new Date(),cn=clienteNuevo({total1:$("simple-total1").value,total2:$("simple-total2").value});
-  return {fecha:fecha(d),hora:hora(d),clienteNuevo:cn===null?null:dinero.format(cn),observaciones:$("simple-observaciones").value.trim()};
+  var d=new Date();
+  return {fecha:fecha(d),hora:hora(d),observaciones:$("simple-observaciones").value.trim()};
 }
 window.TicketSencillo={actualizar:actualizar,agregar:agregar,enviar:enviar,datos:datos};
 })();
