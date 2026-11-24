@@ -20,15 +20,14 @@ function agregar(){
  $("ticket-cliente").value="";$("ticket-fecha").value=fechaLocal();window.Cotizador.limpiar();pintar();
 }
 function usaTotales(t){return String(t.total1==null?"":t.total1).trim()!==""||String(t.total2==null?"":t.total2).trim()!=="";}
-function diferenciaCliente(t){return (Number(t.total1)||0)-(Number(t.total2)||0);}
+function totalClienteNuevo(){return tickets.reduce(function(a,t){return a+(Number(t.total1)||0);},0)-tickets.reduce(function(a,t){return a+(Number(t.total2)||0);},0);}
 function htmlTicket(t,i){
  var filas=t.items.map(function(p){return '<div class="ticket-linea"><span class="ticket-cantidad">'+p.cantidad+'</span><span class="ticket-producto">'+esc(p.nombre)+(p.presentacion?" · "+esc(p.presentacion):"")+'</span><span class="ticket-precio">'+dinero.format(p.importe)+'</span></div><div class="ticket-unitario">Precio por caja: '+dinero.format(p.precio)+'</div>';}).join("");
- return '<article class="ticket-fisico"><header class="ticket-fisico-cab"><strong>PEÑAFIEL BEBIDAS</strong><span>TICKET · '+(i+1)+'</span></header><div class="ticket-meta"><div><span>Cliente</span><strong>'+(esc(t.cliente)||"________________")+'</strong></div><div><span>Número de pedido</span><strong>'+esc(t.numero)+'</strong></div><div><span>Fecha</span><strong>'+fechaVisible(t.fecha)+'</strong></div><div><span>Hora</span><strong>'+esc(t.hora)+'</strong></div></div><div class="ticket-tabla"><div class="ticket-encabezado-linea"><span>Cant.</span><span>Producto</span><span>Importe</span></div>'+filas+'</div><div class="ticket-suma"><span>Total de cajas</span><strong>'+t.cajas+'</strong></div><div class="ticket-suma ticket-total"><span>TOTAL A PAGAR</span><strong>'+dinero.format(t.total)+'</strong></div><label class="ticket-observaciones">Observaciones<textarea data-observaciones="'+i+'" rows="3" placeholder="Escribe aquí las observaciones de este ticket">'+esc(t.observaciones||"")+'</textarea></label><div class="ticket-control-privado"><div class="ticket-totales-privados"><label>Total 1<input type="number" inputmode="decimal" step="0.01" min="0" value="'+esc(t.total1==null?"":t.total1)+'" data-total1="'+i+'"></label><label>Total 2<input type="number" inputmode="decimal" step="0.01" min="0" value="'+esc(t.total2==null?"":t.total2)+'" data-total2="'+i+'"></label></div><div class="ticket-nota-cliente">Nota cliente nuevo: <strong data-diferencia="'+i+'">'+(usaTotales(t)?dinero.format(diferenciaCliente(t)):'—')+'</strong></div></div><footer class="ticket-firmas"><span>Cliente · Conforme</span></footer><button type="button" class="ticket-borrar" data-borrar="'+i+'">Borrar este ticket</button></article>';
 }
 function pintar(){
  var lista=$("tickets-lista");lista.innerHTML=tickets.length?tickets.map(htmlTicket).join(""):'<p class="muted">Todavía no has agregado tickets. Selecciona productos arriba y prepara el primero.</p>';
  $("tickets-cantidad").textContent=tickets.length+" ticket"+(tickets.length===1?"":"s");
- $("tickets-total").textContent=dinero.format(tickets.reduce(function(a,t){return a+t.total;},0));
+ $("tickets-total").textContent=dinero.format(tickets.reduce(function(a,t){return a+t.total;},0));$("tickets-cliente-nuevo").textContent=dinero.format(totalClienteNuevo());
  $("tickets-enviar").disabled=!tickets.length;$("tickets-reiniciar").disabled=!tickets.length;
  Array.prototype.forEach.call(lista.querySelectorAll("[data-observaciones]"),function(input){input.addEventListener("input",function(){var indice=Number(input.getAttribute("data-observaciones"));tickets[indice].observaciones=input.value;guardarLote();});});
  Array.prototype.forEach.call(lista.querySelectorAll("[data-total1],[data-total2]"),function(input){input.addEventListener("input",function(){var a=input.getAttribute("data-total1"),indice=Number(a!==null?a:input.getAttribute("data-total2")),campo=a!==null?"total1":"total2",valor=Number(input.value);tickets[indice][campo]=input.value.trim();guardarLote();var salida=lista.querySelector("[data-diferencia=\""+indice+"\"]");if(salida)salida.textContent=usaTotales(tickets[indice])?dinero.format(diferenciaCliente(tickets[indice])):"—";});});
@@ -40,11 +39,11 @@ function textoWhatsApp(){
   lineas.push("━━━━━━━━━━━━━━━━━━","🧾 *TICKET "+(i+1)+"*","Cliente: "+(t.cliente||"________________"),"Pedido: "+t.numero,"Fecha: "+fechaVisible(t.fecha)+" · Hora: "+t.hora,"","*Cantidad | Producto | Precio | Importe*");
   t.items.forEach(function(p){lineas.push(p.cantidad+" caja(s) | "+p.nombre+(p.presentacion?" "+p.presentacion:"")+" | "+dinero.format(p.precio)+" | "+dinero.format(p.importe));});
   lineas.push("Total de cajas: "+t.cajas,"*TOTAL: "+dinero.format(t.total)+"*");
-  if(usaTotales(t))lineas.push("*CLIENTE NUEVO: "+dinero.format(diferenciaCliente(t))+"*");
+  
   if(String(t.observaciones||"").trim())lineas.push("Observaciones: "+String(t.observaciones).trim());
   lineas.push("");
  });
- lineas.push("━━━━━━━━━━━━━━━━━━","*TOTAL GENERAL: "+dinero.format(tickets.reduce(function(a,t){return a+t.total;},0))+"*");
+ lineas.push("━━━━━━━━━━━━━━━━━━","*TOTAL GENERAL: "+dinero.format(tickets.reduce(function(a,t){return a+t.total;},0))+"*","*CLIENTE NUEVO: "+dinero.format(totalClienteNuevo())+"*");
  return lineas.join("\n");
 }
 function enviar(){if(!tickets.length)return;var url="https://wa.me/"+window.COTIZADOR_CONFIG.whatsapp+"?text="+encodeURIComponent(textoWhatsApp());window.open(url,"_blank","noopener");}
