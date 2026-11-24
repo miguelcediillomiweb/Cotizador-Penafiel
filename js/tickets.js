@@ -30,7 +30,7 @@ function pintar(){
  $("tickets-total").textContent=dinero.format(tickets.reduce(function(a,t){return a+t.total;},0));$("tickets-cliente-nuevo").textContent=dinero.format(totalClienteNuevo());
  $("tickets-enviar").disabled=!tickets.length;$("tickets-reiniciar").disabled=!tickets.length;
  Array.prototype.forEach.call(lista.querySelectorAll("[data-observaciones]"),function(input){input.addEventListener("input",function(){var indice=Number(input.getAttribute("data-observaciones"));tickets[indice].observaciones=input.value;guardarLote();});});
- Array.prototype.forEach.call(lista.querySelectorAll("[data-total1],[data-total2]"),function(input){input.addEventListener("input",function(){var a=input.getAttribute("data-total1"),indice=Number(a!==null?a:input.getAttribute("data-total2")),campo=a!==null?"total1":"total2",valor=Number(input.value);tickets[indice][campo]=input.value.trim();guardarLote();var salida=lista.querySelector("[data-diferencia=\""+indice+"\"]");if(salida)salida.textContent=usaTotales(tickets[indice])?dinero.format(diferenciaCliente(tickets[indice])):"—";});});
+ Array.prototype.forEach.call(lista.querySelectorAll("[data-total1],[data-total2]"),function(input){input.addEventListener("input",function(){var a=input.getAttribute("data-total1"),indice=Number(a!==null?a:input.getAttribute("data-total2")),campo=a!==null?"total1":"total2";tickets[indice][campo]=input.value.trim();guardarLote();$("tickets-cliente-nuevo").textContent=dinero.format(totalClienteNuevo());});});
  Array.prototype.forEach.call(lista.querySelectorAll("[data-borrar]"),function(b){b.addEventListener("click",function(){tickets.splice(Number(b.getAttribute("data-borrar")),1);guardarLote();pintar();});});
 }
 function textoWhatsApp(){
