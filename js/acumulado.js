@@ -9,8 +9,8 @@ var hoy=new Date(), mesActual=hoy.getFullYear()+"-"+String(hoy.getMonth()+1).pad
 var db=leerDB(), mes=mesActual, datos=cargarMes(mes);
 function leerDB(){try{return JSON.parse(localStorage.getItem(KEY)||"{}");}catch(e){return {};}}
 function guardar(){db[mes]=datos;try{localStorage.setItem(KEY,JSON.stringify(db));}catch(e){}}
-function nuevoMes(m){return {days:24,salesQuota:"",cuQuota:"",sales:[],brands:[1,2,3].map(function(n){return {name:"Marca "+n,quota:"",entries:[]};})};}
-function cargarMes(m){var x=db[m];if(!x)return nuevoMes(m);x.days=Number(x.days)||24;x.sales=x.sales||[];x.brands=x.brands||[];while(x.brands.length<3)x.brands.push({name:"Marca "+(x.brands.length+1),quota:"",entries:[]});x.brands=x.brands.slice(0,3);x.brands.forEach(function(b){b.entries=b.entries||[];});return x;}
+function nuevoMes(m){return {days:24,elapsedDays:1,salesQuota:"",cuQuota:"",sales:[],brands:[1,2,3].map(function(n){return {name:"Marca "+n,quota:"",entries:[]};})};}
+function cargarMes(m){var x=db[m];if(!x)return nuevoMes(m);x.days=Number(x.days)||24;x.elapsedDays=Math.max(1,Math.min(x.days,Math.floor(Number(x.elapsedDays)||1)));x.sales=x.sales||[];x.brands=x.brands||[];while(x.brands.length<3)x.brands.push({name:"Marca "+(x.brands.length+1),quota:"",entries:[]});x.brands=x.brands.slice(0,3);x.brands.forEach(function(b){b.entries=b.entries||[];});return x;}
 function n(v){var x=Number(String(v==null?"":v).replace(",","."));return Number.isFinite(x)?x:0;}
 function money(v){return new Intl.NumberFormat("es-MX",{style:"currency",currency:"MXN",maximumFractionDigits:2}).format(v||0);}
 function qty(v){return new Intl.NumberFormat("es-MX",{minimumFractionDigits:0,maximumFractionDigits:2}).format(v||0);}
@@ -32,7 +32,7 @@ var sec=document.getElementById("acumulado-ventas");if(!sec){sec=document.create
 var days=Math.max(1,Math.min(31,Math.floor(n(datos.days)||24)));
 var brandConfig=datos.brands.map(function(b,i){return '<div class="av-brand-config"><label>Nombre de marca '+(i+1)+'<input data-config="brandName" data-brand="'+i+'" value="'+safe(b.name)+'" placeholder="Ej. Mineral"></label><label>Cuota mensual (CU)<input data-config="brandQuota" data-brand="'+i+'" type="number" min="0" step="0.01" inputmode="decimal" value="'+safe(b.quota)+'" placeholder="Opcional"></label></div>';}).join("");
 sec.innerHTML='<div class="av-head"><div><p class="av-kicker">CONTROL COMERCIAL · MÓDULO INDEPENDIENTE</p><h2>Acumulado de ventas</h2><p>Captura tu venta al terminar cada ruta. Los acumulados y las diferencias se calculan solos.</p></div><button type="button" class="av-print" data-action="print">Imprimir</button></div>'+
-'<div class="av-config"><label>Mes de trabajo<input type="month" data-config="month" value="'+mes+'"></label><label>Días laborables del mes<input type="number" min="1" max="31" step="1" data-config="days" value="'+days+'"></label><label>Cuota mensual de venta ($)<input type="number" min="0" step="0.01" inputmode="decimal" data-config="salesQuota" value="'+safe(datos.salesQuota)+'" placeholder="Ej. 100000"></label><label>Cuota mensual total de Caja Unidad (CU)<input type="number" min="0" step="0.01" inputmode="decimal" data-config="cuQuota" value="'+safe(datos.cuQuota)+'" placeholder="Opcional"></label></div>'+
+'<div class="av-config"><label>Mes de trabajo<input type="month" data-config="month" value="'+mes+'"></label><label>Días laborables del mes<input type="number" min="1" max="31" step="1" data-config="days" value="'+days+'"></label><label>Días transcurridos<input type="number" min="1" max="'+days+' step="1" data-config="elapsedDays" value="'+datos.elapsedDays+'"></label><label>Cuota mensual de venta ($)<input type="number" min="0" step="0.01" inputmode="decimal" data-config="salesQuota" value="'+safe(datos.salesQuota)+'" placeholder="Ej. 100000"></label><label>Cuota mensual total de Caja Unidad (CU)<input type="number" min="0" step="0.01" inputmode="decimal" data-config="cuQuota" value="'+safe(datos.cuQuota)+'" placeholder="Opcional"></label></div>'+
 '<div class="av-brand-configs">'+brandConfig+'</div>'+
 '<div class="av-note"><strong>Conversión oficial del control:</strong> 1 CU = 8,520 ml (355 ml × 24). 600 ml × 12 = 0.8451 CU; 1 L × 12 = 1.4085 CU; 2 L × 8 = 1.8779 CU. Se calcula con precisión completa y solo se redondea al mostrar.</div>'+
 '<div class="av-summary" id="av-summary"></div>'+
@@ -62,7 +62,7 @@ celda(document.querySelector('[data-brand-target="'+key+'"]'),qty(target));
 celda(document.querySelector('[data-brand-diff="'+key+'"]'),diffText(d,false),diffClass(d));});
 sums.sales=v;sums.cu=ctotal;
 }
-var last=days-1,sv=acumVenta(last),sc=objetivo(datos.salesQuota,days),cv=acumCU(last),cc=objetivo(datos.cuQuota,days);
+var elapsed=Math.max(1,Math.min(days,Math.floor(n(datos.elapsedDays)||1))),last=elapsed-1,sv=acumVenta(last),sc=objetivo(datos.salesQuota,elapsed),cv=acumCU(last),cc=objetivo(datos.cuQuota,elapsed);
 var summary=document.getElementById("av-summary");if(summary)summary.innerHTML='<div><small>VENTA ACUMULADA</small><strong>'+money(sv)+'</strong><em class="'+diffClass(sv-sc)+'">'+diffText(sv-sc,true)+' vs. cuota</em></div><div><small>CAJA UNIDAD ACUMULADA</small><strong>'+qty(cv)+' CU</strong><em class="'+diffClass(cv-cc)+'">'+diffText(cv-cc,false)+' CU vs. cuota</em></div><div><small>CUOTA DIARIA DE VENTA</small><strong>'+money(n(datos.salesQuota)/days)+'</strong><em>Cuota mensual ÷ días laborables</em></div><div><small>CUOTA DIARIA DE CU</small><strong>'+qty(n(datos.cuQuota)/days)+' CU</strong><em>Cuota mensual ÷ días laborables</em></div>';
 }
 function guardarEntrada(el){
@@ -73,7 +73,7 @@ guardar();actualizar();
 function config(el){
 var k=el.dataset.config;
 if(k==="month"){var m=el.value;if(!m)return;guardar();mes=m;datos=cargarMes(m);render();return;}
-if(k==="days"){datos.days=Math.max(1,Math.min(31,Math.floor(n(el.value)||1)));el.value=datos.days;guardar();render();return;}
+if(k==="days"){datos.days=Math.max(1,Math.min(31,Math.floor(n(el.value)||1)));datos.elapsedDays=Math.min(datos.elapsedDays,datos.days);el.value=datos.days;guardar();render();return;}\nif(k==="elapsedDays"){datos.elapsedDays=Math.max(1,Math.min(datos.days,Math.floor(n(el.value)||1)));el.value=datos.elapsedDays;guardar();actualizar();return;}
 if(k==="salesQuota"||k==="cuQuota"){datos[k]=el.value;guardar();actualizar();return;}
 var bi=Number(el.dataset.brand);
 if(k==="brandName"){datos.brands[bi].name=el.value;guardar();var title=document.querySelectorAll(".av-brand-block .av-block-title h3")[bi];if(title)title.textContent=el.value||("Marca "+(bi+1));return;}
