@@ -15,7 +15,7 @@ function seleccionActual(){var c=window.cotizacionActual;if(!c||!c.seleccion)ret
 function agregar(){
  var items=seleccionActual();if(!items.length){alert("Primero selecciona los productos y las cajas del ticket.");return;}
  var fecha=$("ticket-fecha").value||fechaLocal(),total=items.reduce(function(a,p){return a+p.importe;},0),cajas=items.reduce(function(a,p){return a+p.cantidad;},0);
- tickets.push({numero:numeroPedido(fecha),cliente:$("ticket-cliente").value.trim(),vendedor:VENDEDOR,ruta:RUTA,fecha:fecha,hora:hora(),items:items,cajas:cajas,total:total,total1:0,total2:0});
+ tickets.push({numero:numeroPedido(fecha),cliente:$("ticket-cliente").value.trim(),vendedor:VENDEDOR,ruta:RUTA,fecha:fecha,hora:hora(),items:items,cajas:cajas,total:total,total1:0,total2:0,observaciones:""});
  guardarLote();
  $("ticket-cliente").value="";$("ticket-fecha").value=fechaLocal();window.Cotizador.limpiar();pintar();
 }
@@ -29,6 +29,7 @@ function pintar(){
  $("tickets-cantidad").textContent=tickets.length+" ticket"+(tickets.length===1?"":"s");
  $("tickets-total").textContent=dinero.format(tickets.reduce(function(a,t){return a+t.total;},0));
  $("tickets-enviar").disabled=!tickets.length;$("tickets-reiniciar").disabled=!tickets.length;
+ Array.prototype.forEach.call(lista.querySelectorAll("[data-observaciones]"),function(input){input.addEventListener("input",function(){var indice=Number(input.getAttribute("data-observaciones"));tickets[indice].observaciones=input.value;guardarLote();});});
  Array.prototype.forEach.call(lista.querySelectorAll("[data-total1],[data-total2]"),function(input){input.addEventListener("input",function(){var a=input.getAttribute("data-total1"),indice=Number(a!==null?a:input.getAttribute("data-total2")),campo=a!==null?"total1":"total2",valor=Number(input.value);tickets[indice][campo]=Number.isFinite(valor)?valor:0;guardarLote();var salida=lista.querySelector("[data-diferencia=\""+indice+"\"]");if(salida)salida.textContent=dinero.format(diferenciaCliente(tickets[indice]));});});
  Array.prototype.forEach.call(lista.querySelectorAll("[data-borrar]"),function(b){b.addEventListener("click",function(){tickets.splice(Number(b.getAttribute("data-borrar")),1);guardarLote();pintar();});});
 }
@@ -37,7 +38,9 @@ function textoWhatsApp(){
  tickets.forEach(function(t,i){
   lineas.push("━━━━━━━━━━━━━━━━━━","🧾 *TICKET "+(i+1)+"*","Cliente: "+(t.cliente||"________________"),"Pedido: "+t.numero,"Fecha: "+fechaVisible(t.fecha)+" · Hora: "+t.hora,"","*Cantidad | Producto | Precio | Importe*");
   t.items.forEach(function(p){lineas.push(p.cantidad+" caja(s) | "+p.nombre+(p.presentacion?" "+p.presentacion:"")+" | "+dinero.format(p.precio)+" | "+dinero.format(p.importe));});
-  lineas.push("Total de cajas: "+t.cajas,"*TOTAL: "+dinero.format(t.total)+"*","*CLIENTE NUEVO: "+dinero.format(diferenciaCliente(t))+"*","");
+  lineas.push("Total de cajas: "+t.cajas,"*TOTAL: "+dinero.format(t.total)+"*","*CLIENTE NUEVO: "+dinero.format(diferenciaCliente(t))+"*");
+  if(String(t.observaciones||"").trim())lineas.push("Observaciones: "+String(t.observaciones).trim());
+  lineas.push("");
  });
  lineas.push("━━━━━━━━━━━━━━━━━━","*TOTAL GENERAL: "+dinero.format(tickets.reduce(function(a,t){return a+t.total;},0))+"*");
  return lineas.join("\n");
