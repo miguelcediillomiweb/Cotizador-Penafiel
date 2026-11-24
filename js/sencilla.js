@@ -37,7 +37,7 @@ function limpiarActual(sinConfirmar){
   if(!sinConfirmar&&hay&&!confirm("¿Limpiar el ticket en curso? Se borrarán productos, Total 1, Total 2 y observaciones."))return;
   $("simple-total1").value="";$("simple-total2").value="";$("simple-observaciones").value="";
   if(window.Cotizador&&window.Cotizador.limpiar)window.Cotizador.limpiar();
-  pintarClienteActual();pintarReloj();
+  pintarReloj();
 }
 function htmlTicket(t,i){
   var filas=t.items.map(function(p){return '<div class="simple-item-fila"><span><b>'+esc(p.marca)+'</b> · '+esc(p.descripcion)+(p.piezas?' · '+esc(p.piezas)+' por caja':'')+'<small>Cajas: '+p.cajas+'</small></span><strong>'+dinero.format(p.importe)+'</strong></div>';}).join("");
