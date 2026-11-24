@@ -73,7 +73,8 @@ guardar();actualizar();
 function config(el){
 var k=el.dataset.config;
 if(k==="month"){var m=el.value;if(!m)return;guardar();mes=m;datos=cargarMes(m);render();return;}
-if(k==="days"){datos.days=Math.max(1,Math.min(31,Math.floor(n(el.value)||1)));datos.elapsedDays=Math.min(datos.elapsedDays,datos.days);el.value=datos.days;guardar();render();return;}\nif(k==="elapsedDays"){datos.elapsedDays=Math.max(1,Math.min(datos.days,Math.floor(n(el.value)||1)));el.value=datos.elapsedDays;guardar();actualizar();return;}
+if(k==="days"){datos.days=Math.max(1,Math.min(31,Math.floor(n(el.value)||1)));datos.elapsedDays=Math.min(datos.elapsedDays,datos.days);el.value=datos.days;guardar();render();return;}
+if(k==="elapsedDays"){datos.elapsedDays=Math.max(1,Math.min(datos.days,Math.floor(n(el.value)||1)));el.value=datos.elapsedDays;guardar();actualizar();return;}
 if(k==="salesQuota"||k==="cuQuota"){datos[k]=el.value;guardar();actualizar();return;}
 var bi=Number(el.dataset.brand);
 if(k==="brandName"){datos.brands[bi].name=el.value;guardar();var title=document.querySelectorAll(".av-brand-block .av-block-title h3")[bi];if(title)title.textContent=el.value||("Marca "+(bi+1));return;}
