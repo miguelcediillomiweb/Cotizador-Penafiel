@@ -44,7 +44,6 @@ function htmlTicket(t,i){
   return '<article class="simple-item"><header class="simple-item-cab"><strong>Ticket '+(i+1)+'</strong><span>'+esc(t.fecha)+' · '+esc(t.hora)+'</span></header>'+filas+
   '<div class="simple-item-total"><span>Total a pagar ('+t.cajas+' cajas)</span><strong>'+dinero.format(t.total)+'</strong></div>'+
   '<div class="simple-privados"><label>Total 1<input type="number" inputmode="decimal" step="0.01" placeholder="0.00" value="'+esc(t.total1)+'" data-t1="'+i+'"></label><label>Total 2<input type="number" inputmode="decimal" step="0.01" placeholder="0.00" value="'+esc(t.total2)+'" data-t2="'+i+'"></label></div>'+
-  '<div class="simple-cliente-nuevo"><span>Total cliente nuevo</span><strong data-cn="'+i+'">'+(cn===null?"—":dinero.format(cn))+'</strong></div>'+
   '<label class="simple-observaciones">Observaciones<textarea rows="2" data-obs="'+i+'" placeholder="Observaciones de este ticket">'+esc(t.observaciones)+'</textarea></label>'+
   '<button type="button" class="ticket-borrar-simple" data-borrar="'+i+'">Borrar ticket</button></article>';
 }
