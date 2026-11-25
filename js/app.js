@@ -20,7 +20,7 @@
   document.getElementById("enviar").addEventListener("click",window.WhatsAppCotizador.enviar);
   
   document.getElementById("ver-pedido").addEventListener("click",function(){
-    document.getElementById("resumen").scrollIntoView({behavior:"smooth",block:"start"});
+    document.getElementById("tickets-reparto").scrollIntoView({behavior:"smooth",block:"start"});
   });
   cargar();
 })();
