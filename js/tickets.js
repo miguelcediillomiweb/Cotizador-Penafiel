@@ -49,6 +49,6 @@ function textoWhatsApp(){
 }
 function enviar(){if(!tickets.length)return;var url="https://wa.me/"+window.COTIZADOR_CONFIG.whatsapp+"?text="+encodeURIComponent(textoWhatsApp());window.open(url,"_blank","noopener");}
 function reiniciar(){if(!tickets.length)return;if(!confirm("¿Borrar todos los tickets preparados? El consecutivo no se reiniciará para evitar repetir números."))return;tickets=[];guardarLote();pintar();}
-function actualizarReloj(){pintarHoraActual();if($("ticket-fecha")&&!$("ticket-fecha").value)$("ticket-fecha").value=fechaLocal();}actualizarReloj();setInterval(actualizarReloj,15000);$("ticket-fecha").value=fechaLocal();$("guardar-ticket").addEventListener("click",agregar);$("tickets-enviar").addEventListener("click",enviar);$("tickets-reiniciar").addEventListener("click",reiniciar);pintar();
+function actualizarReloj(){pintarHoraActual();if($("ticket-fecha"))$("ticket-fecha").value=fechaLocal();}actualizarReloj();setInterval(actualizarReloj,15000);$("ticket-fecha").value=fechaLocal();$("guardar-ticket").addEventListener("click",agregar);$("tickets-enviar").addEventListener("click",enviar);$("tickets-reiniciar").addEventListener("click",reiniciar);pintar();
 window.TicketsReparto={agregar:agregar,enviar:enviar,actualizar:function(){var c=window.cotizacionActual||{cajas:0,total:0};$("completo-cajas").textContent=c.cajas;$("completo-total").textContent=dinero.format(c.total);$("guardar-ticket").disabled=!c.cajas;pintarHoraActual();}};
 })();
