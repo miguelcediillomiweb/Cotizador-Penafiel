@@ -7,7 +7,7 @@ var $=function(id){return document.getElementById(id);};
 function guardarLote(){try{localStorage.setItem(CLAVE_TICKETS,JSON.stringify(tickets));}catch(e){console.warn("No se pudo guardar el lote de tickets en este dispositivo.",e);}}
 function fechaLocal(d){d=d||new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
 function fechaVisible(s){var p=String(s||"").split("-");return p.length===3?p[2]+"/"+p[1]+"/"+p[0]:s;}
-function hora(){return new Intl.DateTimeFormat("es-MX",{hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date());}
+function hora(){return new Intl.DateTimeFormat("es-MX",{hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date());}function pintarHoraActual(){var el=$("ticket-hora-actual");if(el)el.textContent=hora();}
 function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
 function numeroPedido(fecha){var n=parseInt(localStorage.getItem(CLAVE)||"1001",10);if(!Number.isFinite(n)||n<1001)n=1001;localStorage.setItem(CLAVE,String(n+1));var p=(fecha||fechaLocal()).split("-");return RUTA+p[2]+p[1]+p[0].slice(2)+n;}
 function nombreTicket(nombre,presentacion){var s=String(nombre||"")+" "+String(presentacion||"");s=s.replace(/\b(?:ISP|PET|VIDRIO|LATA|ALUMINIO|CAN|BOTELLA)\b/gi," ").replace(/\s{2,}/g," ").trim();return s;}
@@ -49,6 +49,6 @@ function textoWhatsApp(){
 }
 function enviar(){if(!tickets.length)return;var url="https://wa.me/"+window.COTIZADOR_CONFIG.whatsapp+"?text="+encodeURIComponent(textoWhatsApp());window.open(url,"_blank","noopener");}
 function reiniciar(){if(!tickets.length)return;if(!confirm("¿Borrar todos los tickets preparados? El consecutivo no se reiniciará para evitar repetir números."))return;tickets=[];guardarLote();pintar();}
-$("ticket-fecha").value=fechaLocal();$("guardar-ticket").addEventListener("click",agregar);$("tickets-enviar").addEventListener("click",enviar);$("tickets-reiniciar").addEventListener("click",reiniciar);pintar();
-window.TicketsReparto={agregar:agregar,enviar:enviar,actualizar:function(){var el=$("completo-seleccionados");if(el)el.setAttribute("data-cajas",String(window.cotizacionActual?window.cotizacionActual.cajas:0));}};
+function actualizarReloj(){pintarHoraActual();if($("ticket-fecha")&&!$("ticket-fecha").value)$("ticket-fecha").value=fechaLocal();}actualizarReloj();setInterval(actualizarReloj,15000);$("ticket-fecha").value=fechaLocal();$("guardar-ticket").addEventListener("click",agregar);$("tickets-enviar").addEventListener("click",enviar);$("tickets-reiniciar").addEventListener("click",reiniciar);pintar();
+window.TicketsReparto={agregar:agregar,enviar:enviar,actualizar:function(){var c=window.cotizacionActual||{cajas:0,total:0};$("completo-cajas").textContent=c.cajas;$("completo-total").textContent=dinero.format(c.total);$("guardar-ticket").disabled=!c.cajas;pintarHoraActual();}};
 })();
