@@ -70,7 +70,7 @@ function alPulsar(e){
 }
 function enviar(){
   if(!tickets.length)return;
-  var lista=tickets.map(function(t){return{fecha:t.fecha,hora:t.hora,items:t.items,cajas:t.cajas,total:t.total,observaciones:String(t.observaciones||"").trim()};});
+  var lista=tickets.map(function(t){return{fecha:t.fecha,hora:t.hora,cliente:String(t.cliente||"").trim(),items:t.items,cajas:t.cajas,total:t.total,observaciones:String(t.observaciones||"").trim()};});
   window.WhatsAppCotizador.enviarTickets(lista,totalClienteNuevo());
 }
 function reiniciarTodo(){
