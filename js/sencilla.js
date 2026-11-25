@@ -40,7 +40,7 @@ function limpiarActual(sinConfirmar){
   pintarReloj();
 }
 function htmlTicket(t,i){
-  var filas=t.items.map(function(p){return '<div class="simple-item-fila"><span><b>'+esc(p.nombre||p.descripcion)+'</b> · '+esc(p.presentacion||"")+'<small>Cantidad: '+p.cajas+' cajas · '+dinero.format(p.precio||0)+' por caja</small><small>'+p.cajas+' × '+dinero.format(p.precio||0)+' = '+dinero.format(p.importe)+'</small></span><strong>'+dinero.format(p.importe)+'</strong></div>';}).join("");
+  var filas=t.items.map(function(p){var caja=Number(p.precio)||((Number(p.cajas)||0)?Number(p.importe)/(Number(p.cajas)||1):0),cantidad=Number(p.cajas)||0;return '<div class="simple-item-fila"><span><b>'+esc(p.nombre||p.descripcion)+'</b> · '+esc(p.presentacion||"")+'<small>Cantidad: '+cantidad+' cajas · '+dinero.format(caja)+' por caja</small><small>'+cantidad+' × '+dinero.format(caja)+' = '+dinero.format(p.importe)+'</small></span><strong>'+dinero.format(p.importe)+'</strong></div>';}).join("");
   return '<article class="simple-item"><header class="simple-item-cab"><strong>Ticket '+(i+1)+'</strong><span>'+esc(t.fecha)+' · '+esc(t.hora)+'</span></header>'+filas+
   '<div class="simple-item-total"><span>Total a pagar ('+t.cajas+' cajas)</span><strong>'+dinero.format(t.total)+'</strong></div>'+(t.cliente?'<div class="simple-cliente-ticket">Cliente: '+esc(t.cliente)+'</div>':'')+
   '<div class="simple-privados"><label>Total 1<input type="number" inputmode="decimal" step="0.01" placeholder="0.00" value="'+esc(t.total1)+'" data-t1="'+i+'"></label><label>Total 2<input type="number" inputmode="decimal" step="0.01" placeholder="0.00" value="'+esc(t.total2)+'" data-t2="'+i+'"></label></div>'+
