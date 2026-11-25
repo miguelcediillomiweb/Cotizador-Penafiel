@@ -113,3 +113,25 @@
 .buscador-local-info small{font-size:11px;color:var(--muted)}
 .buscador-local-item button{flex-shrink:0;border:0;border-radius:8px;padding:9px 10px;background:var(--azul);color:white;font-size:12px;font-weight:800}
 .simple-cliente-ticket{padding:7px 0;color:var(--azul);font-size:13px;font-weight:700}
+
+/* Reorganización final: dos cotizadores independientes */
+.catalogo-interno,.resumen-interno{display:none!important}
+.tickets-reparto{margin-top:22px;border-top:4px solid var(--azul2)}
+.buscador-principal{margin:14px 0 16px}
+.ticket-formulario{grid-template-columns:1fr 1fr;margin:12px 0}
+.ticket-hora-info{grid-column:1/-1}
+.ticket-linea,.ticket-encabezado-linea{grid-template-columns:34px minmax(0,1fr) minmax(58px,auto) minmax(65px,auto)}
+.ticket-producto{display:flex;flex-direction:column;gap:3px}
+.ticket-producto small{font-size:10px;font-weight:400;color:#68717a}
+.ticket-encabezado-linea span:nth-child(3),.ticket-encabezado-linea span:nth-child(4){text-align:right}
+#completo-seleccionados .grupo-resumen{margin:10px 0}
+#completo-seleccionados .resumen-fila{padding:12px 4px}
+#completo-cajas{font-size:22px;color:var(--azul)}
+#completo-total{font-size:26px;color:var(--azul)}
+#guardar-ticket{margin:8px 0 18px}
+#resumen-simple{margin-top:22px}
+#resumen-simple .simple-reloj{margin:10px 0}
+#resumen-simple .simple-zona{display:block}
+#resumen-simple .simple-privados{margin:14px 0}
+#simple-agregar{margin-top:8px}
+@media(max-width:560px){.ticket-formulario{grid-template-columns:1fr}.ticket-hora-info{grid-column:auto}.ticket-linea,.ticket-encabezado-linea{grid-template-columns:28px minmax(0,1fr) 55px 62px;gap:4px}.ticket-fisico{padding:14px 10px}}
