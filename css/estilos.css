@@ -98,3 +98,18 @@
 .ticket-observaciones{display:flex;flex-direction:column;gap:6px;margin:12px 0;font-size:12px;font-weight:800;color:var(--azul)}
 .ticket-observaciones textarea{width:100%;box-sizing:border-box;min-height:76px;padding:10px;border:1px solid var(--borde);border-radius:9px;background:#fff;color:var(--texto);font:inherit;font-size:14px;font-weight:400;resize:vertical}
 @media print{.ticket-control-privado{display:none!important}}
+
+
+/* Buscador rápido de productos dentro de cada cotizador */
+.simple-cliente{display:flex;flex-direction:column;gap:7px;margin:16px 0 8px;font-size:13px;font-weight:800;color:var(--azul)}
+.simple-cliente input{width:100%;padding:13px;border:1px solid var(--borde);border-radius:10px;background:#fbfcfe;font:inherit;font-size:15px;color:var(--texto)}
+.buscador-local{margin:10px 0 18px;padding:13px;background:#f4f7fb;border:1px solid var(--borde);border-radius:12px}
+.buscador-local label{display:flex;flex-direction:column;gap:7px;font-size:12px;font-weight:800;color:var(--azul)}
+.buscador-local input{width:100%;padding:12px;border:1px solid var(--borde);border-radius:9px;background:white;font:inherit;font-size:14px}
+.buscador-local-resultados{display:grid;gap:7px;margin-top:8px}
+.buscador-local-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px;background:white;border:1px solid var(--borde);border-radius:9px}
+.buscador-local-info{display:flex;flex-direction:column;gap:3px;min-width:0}
+.buscador-local-info strong{font-size:13px;overflow-wrap:anywhere}
+.buscador-local-info small{font-size:11px;color:var(--muted)}
+.buscador-local-item button{flex-shrink:0;border:0;border-radius:8px;padding:9px 10px;background:var(--azul);color:white;font-size:12px;font-weight:800}
+.simple-cliente-ticket{padding:7px 0;color:var(--azul);font-size:13px;font-weight:700}
