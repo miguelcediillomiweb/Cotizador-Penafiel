@@ -19,28 +19,28 @@ function resta(a,b){return Math.round((num(a)-num(b))*100)/100;}
 function totalClienteNuevo(){return Math.round((tickets.reduce(function(a,t){return a+num(t.total1);},0)-tickets.reduce(function(a,t){return a+num(t.total2);},0))*100)/100;}
 function pintarReloj(){var d=new Date();$("simple-fecha").textContent=fecha(d);$("simple-hora").textContent=hora(d);}
 function pintarClienteNuevoGlobal(){var el=$("simple-cliente-nuevo-global");if(el)el.textContent=dinero.format(totalClienteNuevo());}
-function actualizar(){var c=window.cotizacionActual;$("simple-agregar").disabled=!(c&&c.cajas>0);}
+function actualizar(){var c=window.cotizacionSencillaActual;$("simple-agregar").disabled=!(c&&c.cajas>0);}
 function fotoItems(){
-  var c=window.cotizacionActual,mapa={},orden=[];
+  var c=window.cotizacionSencillaActual,mapa={},orden=[];
   Object.keys(c.seleccion).forEach(function(k){var it=window.WhatsAppCotizador.itemSimple(c.seleccion[k]);if(!mapa[it.marca]){mapa[it.marca]=[];orden.push(it.marca);}mapa[it.marca].push(it);});
   var lista=[];orden.forEach(function(m){mapa[m].forEach(function(it){lista.push(it);});});return lista;
 }
 function agregar(){
-  var c=window.cotizacionActual;if(!c||!c.cajas)return;
+  var c=window.cotizacionSencillaActual;if(!c||!c.cajas)return;
   var d=new Date();
   tickets.push({fecha:fecha(d),hora:hora(d),items:fotoItems(),cajas:c.cajas,total:c.total,total1:$("simple-total1").value.trim(),total2:$("simple-total2").value.trim(),observaciones:$("simple-observaciones").value.trim(),cliente:$("simple-cliente").value.trim()});
   guardar();limpiarActual(true);pintarLista();
   var l=$("simple-lista");if(l&&l.lastElementChild&&l.lastElementChild.scrollIntoView)l.lastElementChild.scrollIntoView({behavior:"smooth",block:"nearest"});
 }
 function limpiarActual(sinConfirmar){
-  var c=window.cotizacionActual,hay=(c&&c.cajas>0)||usa($("simple-total1").value,$("simple-total2").value)||$("simple-observaciones").value.trim()||$("simple-cliente").value.trim();
+  var c=window.cotizacionSencillaActual,hay=(c&&c.cajas>0)||usa($("simple-total1").value,$("simple-total2").value)||$("simple-observaciones").value.trim()||$("simple-cliente").value.trim();
   if(!sinConfirmar&&hay&&!confirm("¿Limpiar el ticket en curso? Se borrarán productos, Total 1, Total 2 y observaciones."))return;
   $("simple-total1").value="";$("simple-total2").value="";$("simple-observaciones").value="";$("simple-cliente").value="";
-  if(window.Cotizador&&window.Cotizador.limpiar)window.Cotizador.limpiar();
+  if(window.Cotizador&&window.Cotizador.limpiarSencilla)window.Cotizador.limpiarSencilla();
   pintarReloj();
 }
 function htmlTicket(t,i){
-  var filas=t.items.map(function(p){return '<div class="simple-item-fila"><span><b>'+esc(p.marca)+'</b> · '+esc(p.descripcion)+(p.piezas?' · '+esc(p.piezas)+' por caja':'')+'<small>Cajas: '+p.cajas+'</small></span><strong>'+dinero.format(p.importe)+'</strong></div>';}).join("");
+  var filas=t.items.map(function(p){return '<div class="simple-item-fila"><span><b>'+esc(p.nombre||p.descripcion)+'</b> · '+esc(p.presentacion||"")+'<small>Cantidad: '+p.cajas+' cajas · '+dinero.format(p.precio||0)+' por caja</small><small>'+p.cajas+' × '+dinero.format(p.precio||0)+' = '+dinero.format(p.importe)+'</small></span><strong>'+dinero.format(p.importe)+'</strong></div>';}).join("");
   return '<article class="simple-item"><header class="simple-item-cab"><strong>Ticket '+(i+1)+'</strong><span>'+esc(t.fecha)+' · '+esc(t.hora)+'</span></header>'+filas+
   '<div class="simple-item-total"><span>Total a pagar ('+t.cajas+' cajas)</span><strong>'+dinero.format(t.total)+'</strong></div>'+(t.cliente?'<div class="simple-cliente-ticket">Cliente: '+esc(t.cliente)+'</div>':'')+
   '<div class="simple-privados"><label>Total 1<input type="number" inputmode="decimal" step="0.01" placeholder="0.00" value="'+esc(t.total1)+'" data-t1="'+i+'"></label><label>Total 2<input type="number" inputmode="decimal" step="0.01" placeholder="0.00" value="'+esc(t.total2)+'" data-t2="'+i+'"></label></div>'+
